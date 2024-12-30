@@ -1,1 +1,247 @@
-hi
+P1(vowels n consonants)
+%{
+#include<stdio.h>
+int vowels=0;
+int consonants=0;
+%}
+
+%%
+[aeiouAEIOU] { vowels++; }
+[a-zA-Z] { consonants++; }
+%%
+
+int yywrap(){
+return 1; 
+}
+
+int main(){
+printf("Enter the expression:");
+yylex();
+printf("\n No. of vowels :%d",vowels);
+printf("\n No. of consonants :%d",consonants);
+return 0;
+}
+
+
+
+
+
+
+
+P2(Plus and minus operators )
+%{
+#include<stdio.h>
+
+int plus_operator=0;
+int minus_operator=0;
+%}
+
+%%
+"+" { plus_operator++; }
+"-" { minus_operator++; }
+%%
+
+int yywrap(){
+return 1;
+}
+
+int main(){
+printf("Enter expression:");
+yylex();
+printf("\n No. of plus operators : %d",plus_operator);
+printf("\n No. of minus operators : %d",minus_operator);
+return 0;
+}
+
+
+
+
+
+
+P3(To count words, lines, spaces and blanks )
+%{
+#include<stdio.h>
+#include<string.h>
+int bl=0,ch=0,wr=0,li=0;
+%}
+
+%%
+[\n] { li++;wr++; }
+[\t] { bl++;wr++; }
+[" "] { bl++;wr++; }
+[^\n\t] { ch++; }
+%%
+
+int yywrap(){
+return 1;
+}
+
+int main(){
+FILE *fp;
+char file[100];
+printf("Enter file name:");
+scanf("%s",file);
+fp=fopen(file,"r");
+yyin=fp;
+yylex();
+printf("\n No. of blanks=%d",bl);
+printf("\n No. of lines=%d",li);
+printf("\n No. of characters=%d",ch);
+printf("\n No. of words=%d",wr);
+return 0;
+}
+
+
+
+
+
+P4(To check for valid arithmetic expression )
+%{
+#include<stdio.h>
+int a=0,s=0,m=0,d=0;
+int ob=0,cb=0,flaga=0,flags=0,flagm=0,flagd=0;
+%}
+
+id [a-zA-Z]
+%%
+[id] { printf("%s is an identifier",yytext); }
+["+"] { a++;flaga=1; }
+["-"] { s++;flags=1; }
+["*"] { m++;flagm=1; }
+["/"] { d++;flagd=1; }
+["("] { ob++; }
+[")"] { cb++; }
+%%
+
+int yywrap(){
+return 1;
+}
+
+int main(){
+printf("enter the expression:");
+yylex();
+if(ob-cb==0){
+ printf("\n valid expression");
+}
+else{
+ printf("invalid expression");
+}
+
+printf("\n add=%d \n sub=%d \n mul=%d \n div=%d \n",a,s,m,d);
+printf("\noperators are:");
+if(flaga){
+ printf("\n+");
+}
+if(flags){
+ printf("\n-");
+}
+if(flagm){
+ printf("\n*");
+}
+if(flagd){
+ printf("\n/");
+}
+
+return 0;
+}
+
+
+
+
+
+
+P5(To check if sentence is simple or compound )
+%{
+#include<stdio.h>
+int flag=0;
+%}
+
+%%
+(" "[aA][nN][dD]" ")|(" "[oO][rR]" ")|(" "[bB][uU][tT]" ") { flag=1; }
+%%
+
+int yywrap(){
+return 1;
+}
+
+int main(){
+printf("Enter the sentence:");
+yylex();
+if(flag==0){
+printf("Sentence is simple");
+}
+else{
+printf("sentence is complex");
+}
+
+return 0;
+}
+
+
+
+
+P6(To copy file )
+%{
+#include<stdio.h>
+#include<string.h>
+char line[100];
+%}
+
+%%
+['\n'] { fprintf(yyout,"%s\n",line);line[0]='\0'; }
+(.*) { strcpy(line,yytext); }
+<<EOF>> { fprintf(yyout,"%s",line);return 0; }
+%%
+
+int yywrap(){
+return 1;
+}
+
+int main(){
+extern FILE*yyin,*yyout;
+char ip[100];
+printf("Enter the name of input file:");
+scanf("%s",ip);
+yyin=fopen(ip,"r");
+yyout=fopen("output.txt","w");
+yylex();
+
+fclose(yyin);
+fclose(yyout);
+
+return 0;
+}
+
+
+
+
+
+P7(To separate comment lines )
+%{
+#include<stdio.h>
+#include<string.h>
+int scom=0,bcom=0;
+%}
+
+%%
+"/* "[^\n]+" */" { bcom++;fprintf(yyout," "); }
+"//"[^\n]+ { scom++;fprintf(yyout," "); }
+%%
+
+int yywrap(){
+return 1;
+}
+
+int main(){
+FILE *fp;
+char file[100];
+printf("enter the input file name:");
+scanf("%s",file);
+fp=fopen(file,"r");
+yyin=fp;
+yyout=fopen("output.c","w");
+yylex();
+printf("\n No. of sinle line comments=%d",scom);
+printf("\n No. of block comments=%d",bcom);
+return 0;
+}
