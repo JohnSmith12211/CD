@@ -128,7 +128,7 @@ else{
 }
 
 printf("\n add=%d \n sub=%d \n mul=%d \n div=%d \n",a,s,m,d);
-printf("\noperators are:");
+printf("\n operators are:");
 if(flaga){
  printf("\n+");
 }
